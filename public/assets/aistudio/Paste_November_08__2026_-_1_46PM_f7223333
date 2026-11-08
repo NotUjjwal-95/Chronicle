@@ -1,0 +1,1159 @@
+# CHRONICLE
+## Master Engineering Specification
+**Version:** 1.0  
+**Date:** 8 November 2026  
+**Status:** Approved architectural baseline, pending implementation  
+**Product:** Chronicle, Project Knowledge Reconstruction & Handover Intelligence
+
+---
+
+# 1. Mission and Product Definition
+
+Chronicle transforms fragmented engineering knowledge into a structured, evidence-backed, conflict-aware project handover.
+
+It ingests project artifacts from sources such as:
+
+- GitHub pull requests
+- Slack conversations
+- Jira tickets
+- Notion documentation
+- Custom notes and manually supplied artifacts
+
+It reconstructs:
+
+- Architectural decisions
+- Unfinished work
+- Risks and blockers
+- Dependencies
+- Contributor ownership
+- Knowledge gaps
+- Conflicting claims
+- Recommended next actions
+
+The final output is a verifiable handover package containing evidence, citations, decision history, ownership information, and a cryptographic integrity digest.
+
+### Core principles
+
+1. Every claim must have traceable provenance.
+2. Every citation must be verifiable against its source.
+3. Conflicting claims must remain visible until resolved.
+4. Human approval must be distinguishable from automated verification.
+5. Access control must be enforced server-side.
+6. Confidential information must not leak through reconstruction, exports, or AI prompts.
+7. Handover snapshots must be independently integrity-verifiable.
+8. The web and future Android clients must share the same backend and domain logic.
+
+# 2. Engineering Governance
+
+The following authority hierarchy is mandatory.
+
+| Participant | Responsibility |
+|---|---|
+| Ujjwal | Engineering Authority and final approval |
+| GPT-6 | Independent architecture reviewer, technical specifications, security review, code review |
+| Gemini Argon 4 | Planning, orchestration and task coordination |
+| Google AI Studio | AI subsystem prototyping and model integration work |
+| Google Antigravity | Repository implementation, integration and verification |
+| Claude browser | Supplemental implementation, code generation and review |
+
+### Governance rules
+
+- Ujjwal has final authority over architectural decisions.
+- GPT-6 independently reviews implementation and identifies technical risks.
+- Execution agents must follow this specification.
+- No agent may silently alter database contracts, API contracts, authorization semantics or domain state transitions.
+- Any architectural deviation must be documented and submitted for approval.
+- No agent may claim a build, test, or deployment succeeded without actual execution evidence.
+
+# 3. Technology Baseline
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js App Router |
+| Language | TypeScript, strict mode |
+| Frontend | React |
+| Styling | Tailwind CSS 4 |
+| UI primitives | shadcn/ui |
+| Backend | Next.js server-side API |
+| Database | Supabase PostgreSQL |
+| Authentication | Supabase Auth |
+| Validation | Zod |
+| AI integration | Provider-independent adapter interface |
+| Default AI provider | Google Gemini |
+| Default Gemini model | gemini-2.5-flash |
+| Cryptography | Node.js crypto, SHA-256 |
+| Testing | Vitest and Playwright |
+| Future Android client | Kotlin + Jetpack Compose |
+
+Use existing repository dependencies wherever appropriate. Do not upgrade major dependencies or replace working infrastructure without approval.
+
+# 4. Complete Repository Structure
+
+The following is the target repository topology. Create files when their implementation is reached. Do not generate empty placeholder files merely to make the tree appear complete.
+
+```text
+chronicle/
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── API_SPECIFICATION.md
+│   ├── DATA_MODEL.md
+│   ├── SECURITY_MODEL.md
+│   ├── IMPLEMENTATION_PLAN.md
+│   └── DECISION_LOG.md
+│
+├── public/
+│
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── auth/
+│   │   │       │   └── session/route.ts
+│   │   │       ├── health/route.ts
+│   │   │       └── projects/
+│   │   │           ├── route.ts
+│   │   │           └── [projectId]/
+│   │   │               ├── route.ts
+│   │   │               ├── sources/
+│   │   │               │   ├── route.ts
+│   │   │               │   └── github-pr/route.ts
+│   │   │               ├── reconstruct/route.ts
+│   │   │               ├── verify/route.ts
+│   │   │               ├── claims/
+│   │   │               │   ├── route.ts
+│   │   │               │   └── [claimId]/route.ts
+│   │   │               ├── conflicts/
+│   │   │               │   ├── route.ts
+│   │   │               │   └── [conflictId]/resolve/route.ts
+│   │   │               ├── interviews/
+│   │   │               │   ├── route.ts
+│   │   │               │   └── [interviewId]/submit/route.ts
+│   │   │               ├── graph/route.ts
+│   │   │               ├── contributors/route.ts
+│   │   │               ├── audit-logs/route.ts
+│   │   │               ├── snapshots/
+│   │   │               │   ├── route.ts
+│   │   │               │   └── [snapshotId]/
+│   │   │               │       ├── verify/route.ts
+│   │   │               │       ├── acknowledge/route.ts
+│   │   │               │       └── export/route.ts
+│   │   │               └── reset/route.ts
+│   │   │
+│   │   ├── dashboard/page.tsx
+│   │   ├── projects/
+│   │   │   └── [projectId]/
+│   │   │       ├── layout.tsx
+│   │   │       ├── page.tsx
+│   │   │       ├── sources/page.tsx
+│   │   │       ├── timeline/page.tsx
+│   │   │       ├── conflicts/page.tsx
+│   │   │       ├── interviews/page.tsx
+│   │   │       ├── graph/page.tsx
+│   │   │       ├── handover/page.tsx
+│   │   │       └── settings/page.tsx
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── globals.css
+│   │
+│   ├── components/
+│   │   ├── ui/
+│   │   ├── layout/
+│   │   │   ├── app-shell.tsx
+│   │   │   ├── project-header.tsx
+│   │   │   ├── stage-nav-bar.tsx
+│   │   │   └── role-clearance-bar.tsx
+│   │   └── shared/
+│   │       ├── clearance-badge.tsx
+│   │       ├── claim-status-badge.tsx
+│   │       ├── citation-chip.tsx
+│   │       └── empty-state.tsx
+│   │
+│   ├── features/
+│   │   ├── ingestion/
+│   │   │   ├── source-explorer.tsx
+│   │   │   ├── source-ingest-form.tsx
+│   │   │   └── github-pr-importer.tsx
+│   │   ├── reconstruction/
+│   │   │   ├── timeline-view.tsx
+│   │   │   └── reconstruction-controls.tsx
+│   │   ├── evidence/
+│   │   │   ├── evidence-inspector-drawer.tsx
+│   │   │   └── verification-matrix.tsx
+│   │   ├── conflicts/
+│   │   │   ├── conflict-list.tsx
+│   │   │   └── conflict-resolution-card.tsx
+│   │   ├── interviews/
+│   │   │   ├── interview-queue.tsx
+│   │   │   └── voice-interview-card.tsx
+│   │   ├── graph/
+│   │   │   ├── dependency-blast-graph.tsx
+│   │   │   └── contributor-ownership-matrix.tsx
+│   │   └── handover/
+│   │       ├── handover-portal.tsx
+│   │       ├── snapshot-integrity-card.tsx
+│   │       ├── first-seven-days-board.tsx
+│   │       └── audit-trail-table.tsx
+│   │
+│   ├── domain/
+│   │   ├── entities/
+│   │   │   ├── organization.ts
+│   │   │   ├── membership.ts
+│   │   │   ├── project.ts
+│   │   │   ├── source.ts
+│   │   │   ├── claim.ts
+│   │   │   ├── conflict.ts
+│   │   │   ├── interview.ts
+│   │   │   ├── graph.ts
+│   │   │   ├── snapshot.ts
+│   │   │   └── audit.ts
+│   │   └── engines/
+│   │       ├── secret-redactor.ts
+│   │       ├── deterministic-extractor.ts
+│   │       ├── citation-grounder.ts
+│   │       ├── conflict-detector.ts
+│   │       ├── dependency-graph-builder.ts
+│   │       ├── snapshot-hasher.ts
+│   │       └── handover-exporter.ts
+│   │
+│   ├── services/
+│   │   ├── project-service.ts
+│   │   ├── ingestion-service.ts
+│   │   ├── reconstruction-service.ts
+│   │   ├── review-service.ts
+│   │   ├── handover-service.ts
+│   │   └── authorization-service.ts
+│   │
+│   ├── infrastructure/
+│   │   ├── database/
+│   │   │   ├── repository-interface.ts
+│   │   │   ├── supabase-repository.ts
+│   │   │   ├── memory-seed-repository.ts
+│   │   │   └── index.ts
+│   │   ├── github/
+│   │   │   └── github-client.ts
+│   │   └── ai/
+│   │       ├── ai-adapter-interface.ts
+│   │       ├── gemini-adapter.ts
+│   │       ├── openai-adapter.ts
+│   │       └── index.ts
+│   │
+│   ├── security/
+│   │   ├── session-auth.ts
+│   │   ├── rbac-policy.ts
+│   │   └── clearance-policy.ts
+│   │
+│   ├── schemas/
+│   │   ├── api-v1-schemas.ts
+│   │   └── ai-output-schemas.ts
+│   │
+│   ├── hooks/
+│   │   ├── use-project-workspace.ts
+│   │   └── use-speech-recognition.ts
+│   │
+│   ├── lib/
+│   │   ├── api-response.ts
+│   │   ├── canonical-json.ts
+│   │   └── utils.ts
+│   │
+│   └── types/
+│       └── index.ts
+│
+├── supabase/
+│   ├── migrations/
+│   │   └── 20261108000001_chronicle_v1_schema.sql
+│   ├── seed/
+│   │   └── core_payments_seed.json
+│   └── config.toml
+│
+├── tests/
+│   ├── unit/
+│   │   ├── secret-redactor.test.ts
+│   │   ├── deterministic-extractor.test.ts
+│   │   ├── citation-grounder.test.ts
+│   │   ├── conflict-detector.test.ts
+│   │   ├── rbac-policy.test.ts
+│   │   ├── snapshot-hasher.test.ts
+│   │   └── ai-adapter.test.ts
+│   ├── integration/
+│   │   ├── workflow-lifecycle.test.ts
+│   │   ├── authorization-isolation.test.ts
+│   │   └── persistence.test.ts
+│   └── e2e/
+│       └── handover-journey.spec.ts
+│
+├── .env.example
+├── README.md
+└── package.json
+```
+
+# 5. Domain Model
+
+## 5.1 Enumerations
+
+### ClearanceTier
+
+- `1`: `TIER_1_EXTERNAL`
+- `2`: `TIER_2_INTERNAL`
+- `3`: `TIER_3_CONFIDENTIAL`
+
+Higher numbers indicate greater clearance.
+
+A user can only access data at or below their effective clearance.
+
+### SourceType
+
+- `GITHUB_PR`
+- `SLACK_THREAD`
+- `JIRA_TICKET`
+- `NOTION_DOC`
+- `CUSTOM_NOTE`
+
+### ClaimCategory
+
+- `DECISION`
+- `UNFINISHED_WORK`
+- `RISK_BLOCKER`
+- `DEPENDENCY`
+- `OWNERSHIP_CONTACT`
+- `NEXT_ACTION`
+
+### ClaimVerificationStatus
+
+- `EXTRACTED`: Candidate created by deterministic or AI extraction.
+- `VERIFIED`: Citation has been programmatically grounded.
+- `MISSING_EVIDENCE`: Citation is absent or cannot be verified.
+- `CONFLICTED`: Claim participates in an unresolved conflict.
+- `HUMAN_APPROVED`: Explicit human review has approved the claim.
+- `SUPERSEDED`: Claim lost a resolved conflict and remains in history.
+- `REJECTED`: Explicitly rejected by an authorized reviewer.
+
+### ExtractionOrigin
+
+- `DETERMINISTIC`
+- `AI_ENRICHED`
+- `HUMAN_AUTHORED`
+
+### ReconstructionMode
+
+- `DETERMINISTIC`
+- `AI_ENRICHED`
+- `AI_FALLBACK`
+
+The UI and audit trail must disclose which mode generated a reconstruction.
+
+## 5.2 Claim State Machine
+
+Valid transitions must be explicitly implemented and tested.
+
+```text
+EXTRACTED
+  ├── VERIFIED
+  ├── MISSING_EVIDENCE
+  ├── CONFLICTED
+  └── REJECTED
+
+VERIFIED
+  ├── CONFLICTED
+  ├── HUMAN_APPROVED
+  ├── SUPERSEDED
+  └── REJECTED
+
+MISSING_EVIDENCE
+  ├── VERIFIED
+  ├── HUMAN_APPROVED
+  └── REJECTED
+
+CONFLICTED
+  ├── HUMAN_APPROVED
+  └── SUPERSEDED
+
+HUMAN_APPROVED
+  ├── SUPERSEDED
+  └── REJECTED
+```
+
+A human approval must never be silently overwritten by an automated extraction or verification process.
+
+A resolved conflict must preserve both the winning and losing claims and their previous states.
+
+# 6. Security and Authorization Architecture
+
+## 6.1 Authentication
+
+Use Supabase Auth as the primary identity provider.
+
+- Browser sessions use secure, HttpOnly cookies.
+- Android will use a supported Bearer-token authentication flow.
+- Server-side code must validate the authenticated identity.
+- Never trust a client-supplied user ID, role, project ID or clearance tier as proof of authorization.
+- Do not create a custom HMAC authentication system when Supabase Auth provides the required identity infrastructure.
+
+## 6.2 Multi-Tenant Isolation
+
+Introduce:
+
+- `organizations`
+- `organization_memberships`
+- `project_memberships`
+
+Every project belongs to an organization.
+
+Every protected project operation must verify:
+
+1. The authenticated user exists.
+2. The user belongs to the organization.
+3. The user has membership in the requested project.
+4. The user's role permits the requested action.
+5. The user's effective clearance permits access to the requested data.
+
+Project membership, role permissions and clearance are separate authorization dimensions.
+
+## 6.3 Shadow Role Preview
+
+A TIER_3 maintainer may preview a lower-clearance view.
+
+The preview must:
+
+- Be authorized by the server.
+- Be scoped to read-only operations.
+- Never increase the authenticated user's privileges.
+- Never modify the user's actual role.
+- Never bypass project membership.
+- Never expose hidden data through counts, errors, graph edges or exports.
+
+A TIER_1 user must never escalate privileges by changing a browser request.
+
+## 6.4 Pre-LLM Clearance Isolation
+
+Before invoking any AI provider:
+
+```typescript
+visibleSources.every(
+  source => source.accessTier <= targetClearanceTier
+);
+```
+
+The service must reject an invalid source collection before constructing a prompt.
+
+The model must never receive higher-clearance sources than the requested reconstruction permits.
+
+Authorization filtering must happen before data reaches the AI adapter, not inside the prompt.
+
+## 6.5 Secret Redaction
+
+Redact common sensitive patterns, including:
+
+- OpenAI and Stripe-style secret keys
+- GitHub PATs (`ghp_`, `github_pat_`)
+- AWS access key IDs
+- Slack tokens
+- JWTs
+- PostgreSQL and Redis connection strings
+- Password, secret and token assignments
+- Email addresses when configured as sensitive
+- Confidential private network information where appropriate
+
+Important rules:
+
+- Never persist raw secrets in claims or AI prompts.
+- Never log secret values.
+- Preserve sanitized content as the downstream evidence coordinate system.
+- Store redaction metadata, not the original secret.
+- Use synthetic planted test secrets only. Never use real credentials in test datasets.
+
+# 7. Deterministic Extraction and Citation Grounding
+
+## 7.1 DeterministicExtractor
+
+Every custom source must be processable without an AI API key.
+
+Extract candidate facts from sanitized content using deterministic rules.
+
+Supported patterns include:
+
+- Decision verbs: migrated, replaced, deprecated, switched.
+- Unfinished work: TODO, WIP, blocked, incomplete, unscheduled.
+- Dependencies: packages, file paths, environment variables, queues.
+- Ownership: handles and contextual role references.
+- Risk indicators: failure, regression, outage, security exposure.
+
+Each candidate should include:
+
+```typescript
+interface CandidateFact {
+  category: ClaimCategory;
+  topicKey: string;
+  stanceValue?: string;
+  title: string;
+  summary: string;
+  sourceId: string;
+  charStart: number;
+  charEnd: number;
+  confidenceScore: number;
+  extractionOrigin: "DETERMINISTIC";
+}
+```
+
+Deterministic extraction creates candidates, not verified truths.
+
+The engine must not manufacture facts simply because a lexical pattern appears.
+
+## 7.2 CitationGrounder
+
+Every citation must be checked against the exact sanitized source content.
+
+Required fields:
+
+- `sourceId`
+- `verbatimQuote`
+- `charStart`
+- `charEnd`
+- `verificationStatus`
+
+The citation offsets must refer to the same sanitized content used for downstream reconstruction.
+
+If redaction changes the content, all offsets must be computed after redaction.
+
+Unverified citations must not be represented as verified evidence.
+
+## 7.3 ConflictDetector
+
+Detect potential contradictions using:
+
+- Canonical topic keys
+- Opposing stance values
+- Temporal ordering
+- Source provenance
+- Existing conflict records
+
+Do not automatically resolve a contradiction based on source recency or AI confidence.
+
+Conflicts require authorized human resolution.
+
+# 8. Conflict Resolution
+
+Resolution options:
+
+- `CLAIM_A`
+- `CLAIM_B`
+- `SYNTHESIZE`
+
+Resolution must execute atomically.
+
+For a winning claim:
+
+- Transition to `HUMAN_APPROVED`.
+- Preserve its original extraction and verification history.
+
+For a losing claim:
+
+- Transition to `SUPERSEDED`.
+- Preserve it in the historical timeline.
+- Exclude it from active handover decisions.
+
+For synthesized decisions:
+
+- Create a new human-authored claim.
+- Preserve references to both original claims.
+- Record the resolution rationale.
+
+If an outdated Notion document needs updating, create a `NEXT_ACTION` claim.
+
+All resolution operations must create audit events.
+
+# 9. Database Architecture
+
+Use Supabase PostgreSQL with relational tables and transactional operations.
+
+## 9.1 Required Tables
+
+The original ten-table schema is expanded to include multi-tenant identity and membership.
+
+1. `organizations`
+2. `organization_memberships`
+3. `projects`
+4. `project_memberships`
+5. `contributors`
+6. `source_artifacts`
+7. `claims`
+8. `claim_citations`
+9. `conflicts`
+10. `exit_interviews`
+11. `dependency_edges`
+12. `handover_snapshots`
+13. `snapshot_acknowledgements`
+14. `audit_logs`
+
+## 9.2 Mandatory Database Constraints
+
+- Every project must reference an organization.
+- Every project membership must reference an authenticated user and project.
+- Use composite foreign keys for project-scoped relationships.
+- `claim_citations` must not reference a claim and source from different projects.
+- `conflicts` must have composite foreign keys to both associated claims.
+- `claims.interview_id`, when used, must reference a valid interview.
+- Access tiers must be constrained to 1 through 3.
+- Citation access must not exceed the source or claim access tier.
+- Audit log sequence numbers must be unique within the appropriate scope.
+- Snapshot versions must be unique per project.
+- All transactional conflict resolution updates must commit or roll back together.
+
+## 9.3 Immutable Snapshots
+
+A snapshot contains:
+
+- Canonical JSON payload
+- SHA-256 digest
+- Version tag
+- Creator identity
+- Creation timestamp
+
+Acknowledgements must be stored separately in `snapshot_acknowledgements`.
+
+Snapshot payloads and digests must not be mutable after creation.
+
+Use database permissions and triggers to prevent unauthorized updates and deletes.
+
+SHA-256 verifies payload integrity. It does not independently prove who created the snapshot. Authenticity and authorization must be established separately.
+
+## 9.4 Audit Logs
+
+Audit events should be append-only.
+
+Record:
+
+- Actor
+- Organization and project
+- Role
+- Action
+- Target entity
+- Timestamp
+- Structured metadata
+
+Use database protections to prevent normal application users from modifying or deleting historical audit events.
+
+## 9.5 Persistence Modes
+
+Two implementations are supported:
+
+**SupabasePostgresRepository**
+- Production persistence.
+- Relational schema.
+- Foreign keys and constraints.
+- Atomic transactions.
+- Server-side authorization.
+
+**DeterministicSeedRepository**
+- Development, testing and explicitly enabled demonstration mode.
+- Deterministic synthetic seed data.
+- Predictable in-memory behavior.
+
+Production must fail closed if database configuration or connectivity is unavailable.
+
+Never silently fall back from production persistence to in-memory storage.
+
+The memory repository is not equivalent to PostgreSQL ACID guarantees and must not be described as such.
+
+# 10. API v1 Contract
+
+All API routes live under:
+
+`/api/v1`
+
+## Response envelopes
+
+Success:
+
+```json
+{
+  "ok": true,
+  "meta": {
+    "projectId": "uuid",
+    "effectiveTier": 3,
+    "persistenceMode": "supabase",
+    "timestamp": "ISO-8601"
+  },
+  "data": {}
+}
+```
+
+Error:
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions"
+  }
+}
+```
+
+The server must never disclose inaccessible records through error details.
+
+## Endpoint inventory
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/auth/session` | GET, POST | Read or switch authorized active session context |
+| `/health` | GET | Service health |
+| `/projects` | GET, POST | List and create projects |
+| `/projects/:id` | GET, PATCH | Retrieve and update project |
+| `/projects/:id/sources` | GET, POST | List and ingest artifacts |
+| `/projects/:id/sources/github-pr` | POST | Import GitHub PR artifacts |
+| `/projects/:id/reconstruct` | POST | Run reconstruction |
+| `/projects/:id/verify` | POST | Verify claim citations |
+| `/projects/:id/claims` | GET | List claims |
+| `/projects/:id/claims/:claimId` | PATCH | Update a claim |
+| `/projects/:id/conflicts` | GET | List conflicts |
+| `/projects/:id/conflicts/:conflictId/resolve` | POST | Resolve conflict |
+| `/projects/:id/interviews` | GET | List interviews |
+| `/projects/:id/interviews/:interviewId/submit` | POST | Submit exit interview answers |
+| `/projects/:id/graph` | GET | Retrieve dependency graph |
+| `/projects/:id/contributors` | GET | Retrieve contributor ownership |
+| `/projects/:id/audit-logs` | GET | Retrieve authorized audit history |
+| `/projects/:id/snapshots` | GET, POST | List and create snapshots |
+| `/projects/:id/snapshots/:snapshotId/verify` | POST | Verify snapshot digest |
+| `/projects/:id/snapshots/:snapshotId/acknowledge` | POST | Record receipt acknowledgement |
+| `/projects/:id/snapshots/:snapshotId/export` | GET | Export Markdown or JSON |
+| `/projects/:id/reset` | POST | Reset explicitly enabled demo workspace |
+
+All endpoints require authentication and appropriate project authorization, except explicitly public health checks.
+
+Additional requirements:
+
+- Validate request and response structures using Zod.
+- Use consistent HTTP status codes.
+- Add pagination to potentially large collections.
+- Use idempotency protection for retryable write operations where appropriate.
+- Protect cookie-authenticated mutations against CSRF.
+- Do not expose service-role credentials to browser clients.
+- Enforce rate limits on sensitive operations.
+
+# 11. AI Provider Architecture
+
+AI must remain an optional enhancement to deterministic reconstruction.
+
+## 11.1 Provider Interface
+
+Define a provider-independent interface:
+
+```typescript
+interface AIAdapter {
+  reconstruct(
+    sources: SanitizedSource[],
+    targetClearanceTier: ClearanceTier
+  ): Promise<AiReconstructionOutput>;
+}
+```
+
+The output must be validated using a Zod schema.
+
+## 11.2 Gemini Adapter
+
+- Default model: `gemini-2.5-flash`
+- Model configurable through `GEMINI_MODEL`.
+- JSON response MIME type.
+- Strict schema validation.
+- Explicit timeouts and error handling.
+
+## 11.3 OpenAI Adapter
+
+Implement through the same provider-independent interface.
+
+Provider-specific configuration must not leak into domain services.
+
+## 11.4 Failure Handling
+
+On network errors, rate limits, invalid structured output or provider failure:
+
+1. Log a structured warning without sensitive content.
+2. Record the failure mode.
+3. Run deterministic reconstruction.
+4. Return a valid result.
+5. Mark the reconstruction mode as `AI_FALLBACK`.
+
+Do not present fallback output as AI-enriched output.
+
+## 11.5 AI Security
+
+- Redact before AI processing.
+- Filter clearance before AI processing.
+- Never send raw credentials or secrets.
+- Treat source artifacts as untrusted input, not executable instructions.
+- Prevent source content from overriding system or developer instructions.
+- Validate all AI-generated claims and citations independently.
+
+# 12. Handover Snapshot and Export
+
+A handover snapshot must include:
+
+- Project overview
+- Active architectural decisions
+- Unfinished work
+- Risks and blockers
+- Dependencies
+- Contributor ownership
+- Resolved conflicts
+- Superseded claims and their history
+- Open knowledge gaps
+- Exit interview answers
+- First seven days of recommended actions
+- Citation provenance
+- Snapshot version and SHA-256 digest
+
+Support:
+
+- Markdown export
+- Structured JSON export
+- Server-side integrity verification
+- Incoming owner acknowledgement
+
+Exports must respect the requesting user's effective clearance.
+
+# 13. User Interface Requirements
+
+The product must provide URL-addressable project routes:
+
+- Dashboard
+- Sources
+- Timeline
+- Conflicts
+- Interviews
+- Dependency graph
+- Handover
+- Settings
+
+## Guided workflow
+
+1. Ingest sources.
+2. Reconstruct project history.
+3. Verify evidence.
+4. Resolve conflicts.
+5. Complete knowledge-gap interviews.
+6. Inspect dependency and ownership graph.
+7. Generate and lock handover.
+8. Verify integrity and acknowledge receipt.
+
+## Dependency graph
+
+Implement an interactive SVG node-link visualization.
+
+Represent:
+
+- Contributors
+- Sources
+- Modules
+- Services
+- Claims
+- Interviews
+
+Provide click-to-inspect functionality.
+
+All graph nodes and edges must be clearance-filtered server-side.
+
+## Dynamic statistics
+
+All dashboard counters must derive from actual repository data.
+
+No hardcoded artifact counts, claim counts, conflict counts or completion percentages.
+
+# 14. Synthetic Demonstration Dataset
+
+Project:
+
+`Core-Payments-Service`
+
+The dataset should contain approximately 28 realistic artifacts, distributed across all three clearance tiers.
+
+Include:
+
+- GitHub PRs
+- Slack discussions
+- Jira tickets
+- Notion documentation
+- Custom engineering notes
+- Realistic contributor identities
+- File and module references
+- Three multi-source contradictions
+- Two unresolved knowledge gaps
+- Unfinished work
+- Dependency relationships
+- Synthetic planted secret patterns
+
+Example paths:
+
+- `src/middleware/session.ts`
+- `src/workers/retry.ts`
+- `config/whitelist.json`
+- `src/api/v1/charge.ts`
+
+All planted secrets must be clearly fake and nonfunctional.
+
+The dataset must demonstrate:
+
+- Secret redaction
+- Deterministic extraction
+- Citation verification
+- Clearance isolation
+- Conflict resolution
+- Exit interviews
+- Dependency graph
+- Handover export
+- Snapshot verification
+
+Seed counts must be reflected dynamically in the UI.
+
+# 15. Testing and Quality Gates
+
+## Unit tests
+
+- Secret redaction patterns and false-positive handling.
+- Deterministic extraction from arbitrary custom text.
+- Exact citation offsets.
+- Conflict detection and state transitions.
+- RBAC and clearance policy.
+- SHA-256 canonical serialization.
+- AI output validation and fallback.
+
+## Integration tests
+
+- Complete ingestion-to-handover lifecycle.
+- Multi-tenant isolation.
+- Clearance isolation.
+- Conflict resolution atomicity.
+- Snapshot immutability.
+- Supabase repository operations.
+- AI failure fallback.
+
+## End-to-end tests
+
+Demonstrate a complete handover journey:
+
+1. Open project.
+2. Ingest source.
+3. Reconstruct.
+4. Verify evidence.
+5. Resolve contradiction.
+6. Complete interview.
+7. Inspect graph.
+8. Generate snapshot.
+9. Verify digest.
+10. Export and acknowledge handover.
+
+## Mandatory quality gates
+
+Before declaring a milestone complete:
+
+- TypeScript checks pass.
+- Lint passes.
+- Relevant unit tests pass.
+- Relevant integration tests pass.
+- Production build passes.
+- No unauthorized files or architectural changes.
+- No secrets in source control.
+- No unsupported completion claims.
+
+Report exact commands and results.
+
+# 16. Implementation Sequence
+
+Implementation must proceed in controlled milestones.
+
+### Milestone 0: Repository reconnaissance
+
+- Inspect existing repository.
+- Record framework and dependency versions.
+- Identify reusable components.
+- Identify existing code conflicts.
+- Produce a baseline build and test report.
+- Do not overwrite existing working files without review.
+
+### Milestone 1: Domain foundation
+
+- Enumerations and domain entities.
+- Repository interfaces.
+- Claim state machine.
+- Conflict resolution contracts.
+- Deterministic extraction contracts.
+- Unit tests.
+
+### Milestone 2: Security foundation
+
+- Supabase Auth integration.
+- Multi-tenant membership.
+- RBAC.
+- Clearance filtering.
+- Shadow role preview.
+- Security tests.
+
+### Milestone 3: Core engines
+
+- Secret redactor.
+- Deterministic extractor.
+- Citation grounder.
+- Conflict detector.
+- Dependency graph builder.
+- Snapshot hasher.
+
+### Milestone 4: Persistence
+
+- PostgreSQL migration.
+- Repository implementations.
+- Synthetic seed dataset.
+- Transactional operations.
+- Persistence tests.
+
+### Milestone 5: API v1
+
+- Authentication and project APIs.
+- Source ingestion.
+- Reconstruction and verification.
+- Claims and conflicts.
+- Interviews and graph.
+- Snapshots and exports.
+
+### Milestone 6: AI integration
+
+- AI adapter interface.
+- Gemini adapter.
+- OpenAI adapter.
+- Zod validation.
+- Clearance isolation.
+- Deterministic fallback.
+
+### Milestone 7: Web UI
+
+- App shell and dashboard.
+- Sources and timeline.
+- Evidence inspector.
+- Conflict resolution.
+- Exit interviews.
+- Dependency graph.
+- Handover portal.
+
+### Milestone 8: Final verification
+
+- Full integration tests.
+- End-to-end workflow.
+- Security review.
+- Performance checks.
+- Documentation.
+- Final demonstration readiness.
+
+# 17. Work Order Boundaries
+
+## A1: Core engines and security
+
+Owner: Antigravity.
+
+Implement domain engines and security policy only after domain contracts are established.
+
+## A2: AI adapter subsystem
+
+Owner: Google AI Studio for prototyping and interface validation, followed by Antigravity for repository integration.
+
+Target files:
+
+- `src/infrastructure/ai/ai-adapter-interface.ts`
+- `src/infrastructure/ai/gemini-adapter.ts`
+- `src/infrastructure/ai/openai-adapter.ts`
+- `src/schemas/ai-output-schemas.ts`
+
+Acceptance:
+
+- Provider-independent contract.
+- Gemini configuration.
+- Zod-validated structured output.
+- Pre-LLM clearance assertion.
+- Deterministic fallback.
+- Unit tests.
+
+## B1: Persistence and API
+
+Owner: Antigravity.
+
+Implement database migration, repositories, services, API controllers and synthetic seed data.
+
+## B2: UI and graph
+
+Owner: Antigravity.
+
+Implement all URL-addressable routes, guided workflow, interactive dependency graph and handover integrity UI.
+
+# 18. Execution Protocol
+
+Every implementation task must follow this protocol:
+
+1. Read the relevant architecture documentation.
+2. Inspect the existing files before editing.
+3. Identify dependencies and affected interfaces.
+4. Implement only the assigned scope.
+5. Run relevant tests.
+6. Run type checking and lint where appropriate.
+7. Report modified files.
+8. Report exact test results.
+9. Document unresolved issues.
+10. Provide a clear handover for the next task.
+
+### Handover format
+
+```text
+TASK:
+STATUS:
+
+FILES CREATED:
+FILES MODIFIED:
+
+IMPLEMENTATION SUMMARY:
+
+TESTS EXECUTED:
+TEST RESULTS:
+
+KNOWN ISSUES:
+
+ARCHITECTURAL DEVIATIONS:
+NONE / EXPLAIN
+
+NEXT RECOMMENDED TASK:
+```
+
+No agent may silently skip a failed test or conceal a known limitation.
+
+# 19. Definition of Done
+
+Chronicle v1 is complete when:
+
+- A user can authenticate.
+- Organization and project membership are enforced.
+- Sources can be ingested.
+- Secrets are redacted.
+- Custom sources produce deterministic candidate facts.
+- Claims have verifiable citations.
+- Conflicts can be resolved with preserved history.
+- Knowledge gaps can be completed through interviews.
+- Dependency and ownership graphs are interactive.
+- AI enrichment is optional and clearance-isolated.
+- AI failure falls back deterministically.
+- Handover snapshots are cryptographically verifiable.
+- Markdown and JSON exports work.
+- Incoming owners can acknowledge receipt.
+- All views and exports enforce authorization.
+- The complete demonstration workflow passes tests.
+
+---
+
+**Final engineering directive**
+
+Chronicle is not an AI-generated summary dashboard.
+
+It is an evidence and provenance system for engineering knowledge transfer.
+
+Its value comes from the reliability of its claims, integrity of its history, correctness of its permissions, and verifiability of its handovers.
+
+Build the system accordingly.
+
+**Ujjwal: Engineering Authority**  
+**GPT-6: Independent Architecture Reviewer**
+
+All implementation agents must preserve this specification unless an explicitly approved architectural change supersedes it.

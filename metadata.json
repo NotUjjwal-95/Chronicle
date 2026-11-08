@@ -1,0 +1,6 @@
+{
+  "name": "Chronicle — Project Knowledge Reconstruction & Handover Intelligence",
+  "description": "Evidence-backed, conflict-aware engineering project knowledge reconstruction and cryptographically verifiable handover intelligence platform.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
