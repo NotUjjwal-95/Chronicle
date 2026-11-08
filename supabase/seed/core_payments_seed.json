@@ -1,0 +1,673 @@
+{
+  "organization": {
+    "id": "org-chronicle-fin",
+    "slug": "chronicle-financial-systems",
+    "name": "Chronicle Financial Infrastructure",
+    "createdAt": "2026-09-01T08:00:00.000Z"
+  },
+  "organizationMemberships": [
+    {
+      "id": "orgmem-ujjwal",
+      "organizationId": "org-chronicle-fin",
+      "userId": "usr-ujjwal-maintainer",
+      "email": "ujjwal@chronicle.dev",
+      "displayName": "Ujjwal Tyagi",
+      "orgRole": "OWNER",
+      "maxClearanceTier": 3,
+      "createdAt": "2026-09-01T08:05:00.000Z"
+    },
+    {
+      "id": "orgmem-elena",
+      "organizationId": "org-chronicle-fin",
+      "userId": "usr-elena-reviewer",
+      "email": "elena.rostova@chronicle.dev",
+      "displayName": "Elena Rostova",
+      "orgRole": "ADMIN",
+      "maxClearanceTier": 3,
+      "createdAt": "2026-09-01T08:10:00.000Z"
+    },
+    {
+      "id": "orgmem-marcus",
+      "organizationId": "org-chronicle-fin",
+      "userId": "usr-marcus-incoming",
+      "email": "marcus.vance@chronicle.dev",
+      "displayName": "Marcus Vance",
+      "orgRole": "MEMBER",
+      "maxClearanceTier": 2,
+      "createdAt": "2026-09-01T08:15:00.000Z"
+    },
+    {
+      "id": "orgmem-auditor",
+      "organizationId": "org-chronicle-fin",
+      "userId": "usr-auditor-external",
+      "email": "compliance@partner-audit.io",
+      "displayName": "Sora Takahashi",
+      "orgRole": "GUEST",
+      "maxClearanceTier": 1,
+      "createdAt": "2026-09-01T08:20:00.000Z"
+    }
+  ],
+  "project": {
+    "id": "proj-core-payments",
+    "organizationId": "org-chronicle-fin",
+    "slug": "core-payments-service",
+    "name": "Core-Payments-Service",
+    "description": "High-throughput payment authorization, ledger outbox settlement, and webhook reconciliation engine undergoing principal maintainer handover.",
+    "repositoryUrl": "https://github.com/chronicle-fin/core-payments-service",
+    "departingLeadHandle": "arjun-mehta",
+    "incomingLeadHandle": "marcus-vance",
+    "lastReconstructionMode": "DETERMINISTIC",
+    "lastReconstructedAt": "2026-11-08T07:30:00.000Z",
+    "createdAt": "2026-09-15T10:00:00.000Z",
+    "updatedAt": "2026-11-08T07:30:00.000Z"
+  },
+  "projectMemberships": [
+    {
+      "id": "projmem-ujjwal",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "userId": "usr-ujjwal-maintainer",
+      "role": "MAINTAINER",
+      "clearanceTier": 3,
+      "createdAt": "2026-09-15T10:01:00.000Z"
+    },
+    {
+      "id": "projmem-elena",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "userId": "usr-elena-reviewer",
+      "role": "REVIEWER",
+      "clearanceTier": 3,
+      "createdAt": "2026-09-15T10:02:00.000Z"
+    },
+    {
+      "id": "projmem-marcus",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "userId": "usr-marcus-incoming",
+      "role": "INCOMING_OWNER",
+      "clearanceTier": 2,
+      "createdAt": "2026-09-15T10:03:00.000Z"
+    },
+    {
+      "id": "projmem-auditor",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "userId": "usr-auditor-external",
+      "role": "EXTERNAL_AUDITOR",
+      "clearanceTier": 1,
+      "createdAt": "2026-09-15T10:04:00.000Z"
+    }
+  ],
+  "contributors": [
+    {
+      "id": "contrib-arjun",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "handle": "arjun-mehta",
+      "displayName": "Arjun Mehta",
+      "email": "arjun.mehta@chronicle.dev",
+      "roleTitle": "Departing Staff Payments Architect",
+      "departureStatus": "DEPARTING",
+      "primaryDomains": [
+        "src/middleware/session.ts",
+        "src/workers/retry.ts",
+        "config/whitelist.json",
+        "src/security/hsm-signer.ts"
+      ],
+      "accessTier": 1
+    },
+    {
+      "id": "contrib-elena",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "handle": "elena-rostova",
+      "displayName": "Elena Rostova",
+      "email": "elena.rostova@chronicle.dev",
+      "roleTitle": "Principal Security & Ledger Reviewer",
+      "departureStatus": "ACTIVE",
+      "primaryDomains": [
+        "src/ledger/outbox.ts",
+        "src/security/hsm-signer.ts"
+      ],
+      "accessTier": 2
+    },
+    {
+      "id": "contrib-marcus",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "handle": "marcus-vance",
+      "displayName": "Marcus Vance",
+      "email": "marcus.vance@chronicle.dev",
+      "roleTitle": "Incoming Lead Service Owner",
+      "departureStatus": "INCOMING",
+      "primaryDomains": [
+        "src/api/v1/charge.ts",
+        "src/workers/retry.ts"
+      ],
+      "accessTier": 1
+    },
+    {
+      "id": "contrib-priya",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "handle": "priya-nair",
+      "displayName": "Priya Nair",
+      "email": "priya.nair@chronicle.dev",
+      "roleTitle": "Senior Reliability Engineer",
+      "departureStatus": "ACTIVE",
+      "primaryDomains": [
+        "src/api/v1/charge.ts",
+        "src/ledger/outbox.ts"
+      ],
+      "accessTier": 1
+    },
+    {
+      "id": "contrib-devon",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "handle": "devon-brooks",
+      "displayName": "Devon Brooks",
+      "email": "devon.brooks@chronicle.dev",
+      "roleTitle": "Cryptography & Vault Specialist",
+      "departureStatus": "ACTIVE",
+      "primaryDomains": [
+        "src/security/hsm-signer.ts",
+        "config/whitelist.json"
+      ],
+      "accessTier": 3
+    }
+  ],
+  "rawSources": [
+    {
+      "id": "src-01",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #412",
+      "title": "Migrate session token verification to Ed25519 asymmetric keys",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-10-14T11:20:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/middleware/session.ts"
+      ],
+      "rawContent": "We migrated src/middleware/session.ts from legacy symmetric HMAC HS256 signing to asymmetric Ed25519 key pairs so downstream settlement workers can verify tokens using public keys without sharing signing secrets. Primary owner @arjun-mehta is point of contact for src/middleware/session.ts."
+    },
+    {
+      "id": "src-02",
+      "sourceType": "NOTION_DOC",
+      "externalRef": "NOTION-ARCH-09",
+      "title": "Core Payments Authentication & Session Architecture Handbook",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-08-20T09:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/middleware/session.ts"
+      ],
+      "rawContent": "Standardized on symmetric HMAC HS256 shared-secret signing in src/middleware/session.ts across all edge gateways. Every gateway reads the shared secret directly from environment variables."
+    },
+    {
+      "id": "src-03",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #448",
+      "title": "Replace volatile Redis BullMQ retry worker with PostgreSQL transactional outbox",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-10-22T15:40:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/workers/retry.ts",
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "We replaced the volatile Redis Streams BullMQ retry queue in src/workers/retry.ts with a PostgreSQL transactional outbox using SKIP LOCKED polling to prevent silent drop of failed settlement webhooks during Redis failover. Temp debug URI postgres://svc_payments:FakePlantedPass99!@db-internal.chronicle.local:5432/payments_staging was scrubbed."
+    },
+    {
+      "id": "src-04",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#payments-eng-2026-10-19",
+      "title": "Thread: Retry queue backing store for failed charge settlements",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-10-19T18:10:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/workers/retry.ts"
+      ],
+      "rawContent": "We standardized on Redis Streams BullMQ in src/workers/retry.ts as the sole retry queue backing store because PostgreSQL polling added lock contention during peak flash sales. Synthetic Slack credential fixture CHRONICLE_TEST_SECRET_SLACK_TOKEN_001 was planted to validate secret redaction."
+    },
+    {
+      "id": "src-05",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1804",
+      "title": "Enforce strict 3000ms settlement webhook timeout in charge handler",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-10-27T14:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "We decided to enforce a strict 3000ms timeout on synchronous settlement webhooks in src/api/v1/charge.ts so slow acquiring banks cannot exhaust the Node.js HTTP connection pool."
+    },
+    {
+      "id": "src-06",
+      "sourceType": "NOTION_DOC",
+      "externalRef": "NOTION-RUNBOOK-14",
+      "title": "Acquirer Settlement SLA & Webhook Timeout Policy",
+      "authorHandle": "elena-rostova",
+      "createdAt": "2026-09-12T10:30:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "Acquirer webhook handlers in src/api/v1/charge.ts adopted an extended 15000ms timeout window to accommodate cross-border 3DS2 settlement responses without triggering premature retries."
+    },
+    {
+      "id": "src-07",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #455",
+      "title": "WIP: Partial merchant CIDR reload in config/whitelist.json",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-10-30T16:45:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "config/whitelist.json"
+      ],
+      "rawContent": "TODO: Complete zero-downtime SIGHUP reload validation for config/whitelist.json before Black Friday freeze. Currently malformed CIDR entries in config/whitelist.json cause a process crash regression on boot."
+    },
+    {
+      "id": "src-08",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#sec-incidents-2026-11-01",
+      "title": "Confidential HSM key rotation & emergency fallback key handling",
+      "authorHandle": "devon-brooks",
+      "createdAt": "2026-11-01T21:15:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "src/security/hsm-signer.ts"
+      ],
+      "rawContent": "Critical security exposure in src/security/hsm-signer.ts: when the primary PKCS#11 HSM slot disconnects, the signer falls back to an unencrypted local staging key. Planted test key sk_live_FAKE_PLANTED_HSM_FALLBACK_9988776655443322 and AWS key AKIAIOSFODNN7EXAMPLE must never be used in production."
+    },
+    {
+      "id": "src-09",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1829",
+      "title": "Backfill dead-letter settlement reconciliation script",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-02T09:20:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/workers/retry.ts",
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "Incomplete dead-letter queue reconciliation tooling in src/workers/retry.ts is blocked by schema lock contention on src/ledger/outbox.ts for transactions older than 72 hours."
+    },
+    {
+      "id": "src-10",
+      "sourceType": "CUSTOM_NOTE",
+      "externalRef": "NOTE-HANDOVER-01",
+      "title": "Departing Architect Handover Notes: Charge & Outbox Coupling",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-03T13:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts",
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "src/api/v1/charge.ts depends on src/ledger/outbox.ts sharing the same serializable PostgreSQL transaction context. Incoming owner must verify connection pool sizing before increasing worker concurrency."
+    },
+    {
+      "id": "src-11",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #461",
+      "title": "Deprecate v0 legacy charge endpoint and enforce idempotency-key header",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-11-03T17:10:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "We deprecated the legacy unversioned charge endpoint and standardized on mandatory Idempotency-Key UUIDv7 headers in src/api/v1/charge.ts."
+    },
+    {
+      "id": "src-12",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#payments-oncall-2026-11-04",
+      "title": "On-call Escalation Matrix for Ledger Outbox Lag",
+      "authorHandle": "elena-rostova",
+      "createdAt": "2026-11-04T08:45:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "Primary owner @elena-rostova is responsible for src/ledger/outbox.ts integrity checks and on-call escalation when outbox lag exceeds 500 unsettled rows."
+    },
+    {
+      "id": "src-13",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1840",
+      "title": "Vault HSM envelope encryption dependency in hsm-signer.ts",
+      "authorHandle": "devon-brooks",
+      "createdAt": "2026-11-04T11:30:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "src/security/hsm-signer.ts"
+      ],
+      "rawContent": "src/security/hsm-signer.ts depends on upstream service Internal HSM Key Vault and environment variable HSM_SLOT_PIN. Test token ghp_FAKEPLANTEDGITHUBPAT1234567890ABCDEF was revoked during audit."
+    },
+    {
+      "id": "src-14",
+      "sourceType": "NOTION_DOC",
+      "externalRef": "NOTION-SEC-22",
+      "title": "Confidential Tier-3 Partner Whitelist & Manual Override Protocol",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-04T14:20:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "config/whitelist.json"
+      ],
+      "rawContent": "Single point of failure risk in config/whitelist.json: three sovereign banking settlement IPs are hardcoded with undocumented checksum flags known only to @arjun-mehta. Temporary test credential api_key=\"FAKE_PLANTED_PARTNER_KEY_88776655\" redacted."
+    },
+    {
+      "id": "src-15",
+      "sourceType": "CUSTOM_NOTE",
+      "externalRef": "NOTE-HANDOVER-02",
+      "title": "First Week Operational Priorities for Incoming Lead",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-05T09:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/middleware/session.ts",
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "Incoming owner must update the outdated Notion architecture docs after resolving the session signing and webhook timeout contradictions in src/middleware/session.ts and src/api/v1/charge.ts."
+    },
+    {
+      "id": "src-16",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #466",
+      "title": "Add circuit breaker around Stripe settlement webhook dispatch",
+      "authorHandle": "marcus-vance",
+      "createdAt": "2026-11-05T11:15:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "We adopted an adaptive circuit breaker in src/api/v1/charge.ts that trips after 5 consecutive 5xx responses from upstream settlement gateways."
+    },
+    {
+      "id": "src-17",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1851",
+      "title": "Unfinished multi-currency FX rounding guard in ledger outbox",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-11-05T13:50:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "WIP: Zero-decimal JPY and KRW settlement rounding guard in src/ledger/outbox.ts is incomplete and currently blocked by upstream FX feed schema validation."
+    },
+    {
+      "id": "src-18",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#payments-eng-2026-11-05",
+      "title": "Race condition in concurrent retry worker lease renewal",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-05T16:05:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/workers/retry.ts"
+      ],
+      "rawContent": "Identified a race condition risk in src/workers/retry.ts when batch lease renewal exceeds 45 seconds under heavy GC pause, risking duplicate webhook dispatch if idempotency keys expire."
+    },
+    {
+      "id": "src-19",
+      "sourceType": "NOTION_DOC",
+      "externalRef": "NOTION-OPS-31",
+      "title": "Public API Rate Limiting & Partner Tier Quotas",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-11-05T18:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "We enforced token-bucket rate limiting at 1,200 requests per minute per merchant account in src/api/v1/charge.ts to protect downstream ledger capacity."
+    },
+    {
+      "id": "src-20",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #470",
+      "title": "Pin Node crypto SHA-256 canonical digest generator for audit exports",
+      "authorHandle": "elena-rostova",
+      "createdAt": "2026-11-06T08:30:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/ledger/outbox.ts"
+      ],
+      "rawContent": "We standardized on deterministic lexicographical JSON key sorting before SHA-256 digest generation in src/ledger/outbox.ts so external auditors can independently verify settlement batches."
+    },
+    {
+      "id": "src-21",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1860",
+      "title": "Rotate emergency HSM Ceremony Quorum custodians before Arjun exit",
+      "authorHandle": "devon-brooks",
+      "createdAt": "2026-11-06T10:45:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "src/security/hsm-signer.ts"
+      ],
+      "rawContent": "TODO: Revoke @arjun-mehta YubiHSM quorum share in src/security/hsm-signer.ts and issue replacement M-of-N custodian share to @marcus-vance before final offboarding date."
+    },
+    {
+      "id": "src-22",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#sec-incidents-2026-11-06",
+      "title": "Scrub legacy JWT test fixture from middleware integration suite",
+      "authorHandle": "devon-brooks",
+      "createdAt": "2026-11-06T12:15:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "src/middleware/session.ts"
+      ],
+      "rawContent": "Found a planted synthetic JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWtlLXRlc3QtdXNlciIsInJvbGUiOiJ0ZXN0In0.FakeSignaturePlantedForRedactionTest99 in legacy middleware comments; redacted before archiving."
+    },
+    {
+      "id": "src-23",
+      "sourceType": "CUSTOM_NOTE",
+      "externalRef": "NOTE-HANDOVER-03",
+      "title": "Module Ownership Handover Assignment for Charge API",
+      "authorHandle": "marcus-vance",
+      "createdAt": "2026-11-06T14:00:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "Primary owner @marcus-vance is now point of contact and lead maintainer for src/api/v1/charge.ts alongside @priya-nair as secondary reviewer."
+    },
+    {
+      "id": "src-24",
+      "sourceType": "NOTION_DOC",
+      "externalRef": "NOTION-DR-04",
+      "title": "Cross-Region Disaster Recovery & Read-Replica Promotion Guide",
+      "authorHandle": "elena-rostova",
+      "createdAt": "2026-11-06T16:30:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/ledger/outbox.ts",
+        "src/workers/retry.ts"
+      ],
+      "rawContent": "During regional failover, src/workers/retry.ts must be paused before promoting the PostgreSQL standby for src/ledger/outbox.ts to avoid split-brain sequence allocation."
+    },
+    {
+      "id": "src-25",
+      "sourceType": "GITHUB_PR",
+      "externalRef": "PR #474",
+      "title": "Enforce strict schema validation on incoming merchant webhook payloads",
+      "authorHandle": "marcus-vance",
+      "createdAt": "2026-11-07T09:10:00.000Z",
+      "accessTier": 1,
+      "modulePaths": [
+        "src/api/v1/charge.ts"
+      ],
+      "rawContent": "We switched webhook payload parsing in src/api/v1/charge.ts to strict Zod runtime validation, rejecting unknown fields before signature verification."
+    },
+    {
+      "id": "src-26",
+      "sourceType": "JIRA_TICKET",
+      "externalRef": "PAY-1872",
+      "title": "Decommission legacy Redis cache cluster after outbox verification",
+      "authorHandle": "priya-nair",
+      "createdAt": "2026-11-07T11:40:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/workers/retry.ts"
+      ],
+      "rawContent": "Next action: Decommission the legacy Redis retry cluster once conflict resolution confirms PostgreSQL transactional outbox as the canonical backing store for src/workers/retry.ts. Old URI redis://:FakePlantedRedisSecret88@cache-legacy.internal:6379/0 scheduled for removal."
+    },
+    {
+      "id": "src-27",
+      "sourceType": "SLACK_THREAD",
+      "externalRef": "#payments-eng-2026-11-07",
+      "title": "Shadow traffic verification results for Ed25519 session middleware",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-07T15:20:00.000Z",
+      "accessTier": 2,
+      "modulePaths": [
+        "src/middleware/session.ts"
+      ],
+      "rawContent": "100% of production traffic in src/middleware/session.ts has verified cleanly with Ed25519 asymmetric signatures over the past 14 days; NOTION-ARCH-09 is stale and still claims HS256."
+    },
+    {
+      "id": "src-28",
+      "sourceType": "CUSTOM_NOTE",
+      "externalRef": "NOTE-HANDOVER-04",
+      "title": "Confidential Undocumented Emergency Breaker in retry.ts",
+      "authorHandle": "arjun-mehta",
+      "createdAt": "2026-11-07T18:00:00.000Z",
+      "accessTier": 3,
+      "modulePaths": [
+        "src/workers/retry.ts",
+        "config/whitelist.json"
+      ],
+      "rawContent": "Risk exposure: src/workers/retry.ts contains an undocumented environment kill-switch PAYMENT_DRAIN_OVERRIDE that bypasses exponential backoff when config/whitelist.json enters maintenance mode."
+    }
+  ],
+  "exitInterviews": [
+    {
+      "id": "int-gap-01",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "contributorHandle": "arjun-mehta",
+      "contributorName": "Arjun Mehta",
+      "topicKey": "whitelist-sighup-reload-protocol",
+      "modulePath": "config/whitelist.json",
+      "question": "What is the exact sequence to reload config/whitelist.json for Tier-3 sovereign banking IPs without triggering the SIGHUP boot crash regression?",
+      "contextSummary": "PR #455 and NOTION-SEC-22 indicate that config/whitelist.json has an unfinished SIGHUP reload handler and undocumented checksum flags known only to @arjun-mehta.",
+      "status": "PENDING",
+      "accessTier": 2,
+      "answerTranscript": null,
+      "generatedClaimIds": [],
+      "createdAt": "2026-11-07T19:00:00.000Z",
+      "completedAt": null,
+      "completedByUserId": null
+    },
+    {
+      "id": "int-gap-02",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "contributorHandle": "arjun-mehta",
+      "contributorName": "Arjun Mehta",
+      "topicKey": "retry-drain-override-recovery",
+      "modulePath": "src/workers/retry.ts",
+      "question": "When PAYMENT_DRAIN_OVERRIDE or dead-letter lock contention occurs in src/workers/retry.ts, how should the on-call engineer safely drain stuck outbox rows without duplicate settlement?",
+      "contextSummary": "PAY-1829 and NOTE-HANDOVER-04 flag an incomplete dead-letter reconciliation script and an undocumented kill-switch in src/workers/retry.ts.",
+      "status": "PENDING",
+      "accessTier": 1,
+      "answerTranscript": null,
+      "generatedClaimIds": [],
+      "createdAt": "2026-11-07T19:15:00.000Z",
+      "completedAt": null,
+      "completedByUserId": null
+    }
+  ],
+  "dependencyEdges": [
+    {
+      "id": "edge-seed-01",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/api/v1/charge.ts",
+      "targetNodeId": "module:src/middleware/session.ts",
+      "relationship": "DEPENDS_ON",
+      "accessTier": 1,
+      "weight": 3
+    },
+    {
+      "id": "edge-seed-02",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/api/v1/charge.ts",
+      "targetNodeId": "module:src/ledger/outbox.ts",
+      "relationship": "DEPENDS_ON",
+      "accessTier": 1,
+      "weight": 3
+    },
+    {
+      "id": "edge-seed-03",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/workers/retry.ts",
+      "targetNodeId": "module:src/ledger/outbox.ts",
+      "relationship": "DEPENDS_ON",
+      "accessTier": 2,
+      "weight": 3
+    },
+    {
+      "id": "edge-seed-04",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/api/v1/charge.ts",
+      "targetNodeId": "service:core-payments-api",
+      "relationship": "IMPACTS_SERVICE",
+      "accessTier": 1,
+      "weight": 3
+    },
+    {
+      "id": "edge-seed-05",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/ledger/outbox.ts",
+      "targetNodeId": "service:PostgreSQL-Ledger",
+      "relationship": "IMPACTS_SERVICE",
+      "accessTier": 2,
+      "weight": 3
+    },
+    {
+      "id": "edge-seed-06",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/workers/retry.ts",
+      "targetNodeId": "service:Stripe-Webhook-Gateway",
+      "relationship": "IMPACTS_SERVICE",
+      "accessTier": 2,
+      "weight": 2
+    },
+    {
+      "id": "edge-seed-07",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:src/security/hsm-signer.ts",
+      "targetNodeId": "service:HSM-Key-Vault",
+      "relationship": "IMPACTS_SERVICE",
+      "accessTier": 3,
+      "weight": 4
+    },
+    {
+      "id": "edge-seed-08",
+      "organizationId": "org-chronicle-fin",
+      "projectId": "proj-core-payments",
+      "sourceNodeId": "module:config/whitelist.json",
+      "targetNodeId": "module:src/middleware/session.ts",
+      "relationship": "BLOCKS_WORK",
+      "accessTier": 2,
+      "weight": 2
+    }
+  ]
+}
