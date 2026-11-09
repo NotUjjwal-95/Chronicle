@@ -28,9 +28,19 @@ describe('Next.js API v1 Route Handlers', () => {
   beforeEach(async () => {
     resetRepositorySingleton();
     process.env.CHRONICLE_PERSISTENCE_MODE = 'seed';
+    (process.env as any).NODE_ENV = 'test';
+    process.env.CHRONICLE_TEST_AUTH_ENABLED = 'true';
   });
 
   const baseUrl = 'http://localhost:3000';
+
+  const authHeaders = (
+    userId = 'usr-ujjwal-maintainer',
+    extra: Record<string, string> = {}
+  ) => ({
+    Authorization: `Bearer chronicle-test-user:${userId}`,
+    ...extra,
+  });
 
   it('GET /api/v1/health: returns 200 with service health envelope', async () => {
     const res = await healthRoute.GET();
@@ -42,33 +52,40 @@ describe('Next.js API v1 Route Handlers', () => {
   });
 
   it('GET & POST /api/v1/auth/session: manages personas and shadow role preview', async () => {
-    // GET initial session
-    const getReq = new Request(`${baseUrl}/api/v1/auth/session`);
+    // GET initial session with auth headers
+    const getReq = new Request(`${baseUrl}/api/v1/auth/session`, {
+      headers: authHeaders('usr-ujjwal-maintainer'),
+    });
     const getRes = await authSessionRoute.GET(getReq);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
     expect(getJson.ok).toBe(true);
     expect(getJson.data.session.userId).toBe('usr-ujjwal-maintainer');
 
-    // POST switch persona to Elena Reviewer
+    // POST toggle shadow preview to Tier 2
     const postReq = new Request(`${baseUrl}/api/v1/auth/session`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({
-        userId: 'usr-elena-reviewer',
         projectId: 'proj-core-payments',
+        shadowPreviewTier: ClearanceTier.TIER_2_INTERNAL,
       }),
     });
     const postRes = await authSessionRoute.POST(postReq);
     expect(postRes.status).toBe(200);
     const postJson = await postRes.json();
     expect(postJson.ok).toBe(true);
-    expect(postJson.data.session.userId).toBe('usr-elena-reviewer');
-    expect(postRes.headers.get('Set-Cookie')).toContain('chronicle_session_ctx');
+    expect(postJson.data.session.isShadowPreview).toBe(true);
+    expect(postJson.data.session.effectiveClearanceTier).toBe(ClearanceTier.TIER_2_INTERNAL);
+    expect(postRes.headers.get('Set-Cookie')).toContain('chronicle_shadow_tier');
   });
 
   it('GET & POST /api/v1/projects: lists authorized projects and creates new project', async () => {
-    const getReq = new Request(`${baseUrl}/api/v1/projects`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects`, {
+      headers: authHeaders(),
+    });
     const getRes = await projectsRoute.GET(getReq);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
@@ -77,7 +94,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
     const postReq = new Request(`${baseUrl}/api/v1/projects`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({
         slug: 'new-service',
         name: 'New Service',
@@ -95,7 +114,9 @@ describe('Next.js API v1 Route Handlers', () => {
   });
 
   it('GET & PATCH /api/v1/projects/[projectId]: summary and metadata update', async () => {
-    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments`, {
+      headers: authHeaders(),
+    });
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
     const getRes = await projectDetailRoute.GET(getReq, ctx);
     expect(getRes.status).toBe(200);
@@ -106,7 +127,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
     const patchReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({
         name: 'Core Payments Engine v2',
       }),
@@ -122,7 +145,9 @@ describe('Next.js API v1 Route Handlers', () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
 
     // GET sources
-    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/sources`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/sources`, {
+      headers: authHeaders(),
+    });
     const getRes = await sourcesRoute.GET(getReq, ctx);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
@@ -132,7 +157,9 @@ describe('Next.js API v1 Route Handlers', () => {
     // POST ingest source with secret
     const postReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/sources`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({
         sourceType: SourceType.CUSTOM_NOTE,
         externalRef: 'NOTE-99',
@@ -155,7 +182,9 @@ describe('Next.js API v1 Route Handlers', () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
     const req = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/sources/github-pr`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({
         owner: 'chronicle-fin',
         repo: 'core-payments-service',
@@ -176,7 +205,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
     const recReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/reconstruct`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({ useAiEnrichment: false }),
     });
     const recRes = await reconstructRoute.POST(recReq, ctx);
@@ -187,6 +218,7 @@ describe('Next.js API v1 Route Handlers', () => {
 
     const verReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/verify`, {
       method: 'POST',
+      headers: authHeaders(),
     });
     const verRes = await verifyRoute.POST(verReq, ctx);
     expect(verRes.status).toBe(200);
@@ -197,7 +229,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
   it('GET & PATCH /api/v1/projects/[projectId]/claims: lists and updates claim review status', async () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
-    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/claims`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/claims`, {
+      headers: authHeaders(),
+    });
     const getRes = await claimsRoute.GET(getReq, ctx);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
@@ -214,7 +248,9 @@ describe('Next.js API v1 Route Handlers', () => {
       `${baseUrl}/api/v1/projects/proj-core-payments/claims/${claim.id}`,
       {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders('usr-ujjwal-maintainer', {
+          'Content-Type': 'application/json',
+        }),
         body: JSON.stringify({
           verificationStatus: 'HUMAN_APPROVED',
           reason: 'Reviewed and confirmed with departing tech lead.',
@@ -230,7 +266,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
   it('GET & POST /api/v1/projects/[projectId]/conflicts: lists and resolves conflict atomically', async () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
-    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/conflicts`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/conflicts`, {
+      headers: authHeaders(),
+    });
     const getRes = await conflictsRoute.GET(getReq, ctx);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
@@ -250,7 +288,9 @@ describe('Next.js API v1 Route Handlers', () => {
       `${baseUrl}/api/v1/projects/proj-core-payments/conflicts/${openConflict.id}/resolve`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders('usr-ujjwal-maintainer', {
+          'Content-Type': 'application/json',
+        }),
         body: JSON.stringify({
           resolutionOption: ConflictResolutionOption.CLAIM_B,
           rationale: 'PostgreSQL composite index is required for 100% duplicate charge prevention.',
@@ -266,7 +306,9 @@ describe('Next.js API v1 Route Handlers', () => {
 
   it('GET & POST /api/v1/projects/[projectId]/interviews: lists and submits interview transcript', async () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
-    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/interviews`);
+    const getReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/interviews`, {
+      headers: authHeaders(),
+    });
     const getRes = await interviewsRoute.GET(getReq, ctx);
     expect(getRes.status).toBe(200);
     const getJson = await getRes.json();
@@ -283,7 +325,9 @@ describe('Next.js API v1 Route Handlers', () => {
       `${baseUrl}/api/v1/projects/proj-core-payments/interviews/${interview.id}/submit`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders('usr-ujjwal-maintainer', {
+          'Content-Type': 'application/json',
+        }),
         body: JSON.stringify({
           answerTranscript:
             'We manually trigger reconciliation nightly via cronjob at 03:00 UTC using ledger_drift_audit.sql.',
@@ -301,7 +345,9 @@ describe('Next.js API v1 Route Handlers', () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
 
     // Graph
-    const graphReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/graph`);
+    const graphReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/graph`, {
+      headers: authHeaders(),
+    });
     const graphRes = await graphRoute.GET(graphReq, ctx);
     expect(graphRes.status).toBe(200);
     const graphJson = await graphRes.json();
@@ -310,7 +356,9 @@ describe('Next.js API v1 Route Handlers', () => {
     expect(graphJson.data.edges.length).toBeGreaterThan(0);
 
     // Contributors
-    const contribReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/contributors`);
+    const contribReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/contributors`, {
+      headers: authHeaders(),
+    });
     const contribRes = await contributorsRoute.GET(contribReq, ctx);
     expect(contribRes.status).toBe(200);
     const contribJson = await contribRes.json();
@@ -318,7 +366,9 @@ describe('Next.js API v1 Route Handlers', () => {
     expect(contribJson.data.contributors.length).toBe(5);
 
     // Audit Logs
-    const auditReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/audit-logs`);
+    const auditReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/audit-logs`, {
+      headers: authHeaders(),
+    });
     const auditRes = await auditLogsRoute.GET(auditReq, ctx);
     expect(auditRes.status).toBe(200);
     const auditJson = await auditRes.json();
@@ -332,7 +382,9 @@ describe('Next.js API v1 Route Handlers', () => {
     // 1. Create snapshot
     const createReq = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/snapshots`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders('usr-ujjwal-maintainer', {
+        'Content-Type': 'application/json',
+      }),
       body: JSON.stringify({ versionTag: 'v1.0.0-test' }),
     });
     const createRes = await snapshotsRoute.POST(createReq, ctx);
@@ -354,7 +406,9 @@ describe('Next.js API v1 Route Handlers', () => {
       `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/verify`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders('usr-ujjwal-maintainer', {
+          'Content-Type': 'application/json',
+        }),
         body: JSON.stringify({}),
       }
     );
@@ -369,9 +423,11 @@ describe('Next.js API v1 Route Handlers', () => {
       `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/acknowledge`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders('usr-ujjwal-maintainer', {
+          'Content-Type': 'application/json',
+        }),
         body: JSON.stringify({
-          notes: 'Incoming lead verified all architecture decisions and SHA-256 digest.',
+          notes: 'Engineering Authority verified all architecture decisions and SHA-256 digest.',
           verifiedDigest: snapshot.sha256Digest,
         }),
       }
@@ -383,7 +439,10 @@ describe('Next.js API v1 Route Handlers', () => {
 
     // 4. Export snapshot (markdown & json)
     const exportMdReq = new Request(
-      `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/export?format=markdown`
+      `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/export?format=markdown`,
+      {
+        headers: authHeaders(),
+      }
     );
     const exportMdRes = await snapshotExportRoute.GET(exportMdReq, snapCtx);
     expect(exportMdRes.status).toBe(200);
@@ -392,7 +451,10 @@ describe('Next.js API v1 Route Handlers', () => {
     expect(exportMdJson.data.content).toContain('CHRONICLE HANDOVER PACKAGE');
 
     const exportJsonReq = new Request(
-      `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/export?format=json`
+      `${baseUrl}/api/v1/projects/proj-core-payments/snapshots/${snapshot.id}/export?format=json`,
+      {
+        headers: authHeaders(),
+      }
     );
     const exportJsonRes = await snapshotExportRoute.GET(exportJsonReq, snapCtx);
     expect(exportJsonRes.status).toBe(200);
@@ -405,6 +467,7 @@ describe('Next.js API v1 Route Handlers', () => {
     const ctx = { params: Promise.resolve({ projectId: 'proj-core-payments' }) };
     const req = new Request(`${baseUrl}/api/v1/projects/proj-core-payments/reset`, {
       method: 'POST',
+      headers: authHeaders('usr-ujjwal-maintainer'),
     });
     const res = await resetRoute.POST(req, ctx);
     expect(res.status).toBe(200);

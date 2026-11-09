@@ -1,7 +1,10 @@
 import { ZodError } from 'zod';
 import { AuthenticatedSession, ClearanceTier } from '../types';
 import { getRepository } from '../infrastructure/database';
-import { resolveAuthenticatedSession } from '../security/session-auth';
+import {
+  AuthenticationError,
+  resolveAuthenticatedSession,
+} from '../security/session-auth';
 import { AuthorizationError } from '../services/authorization-service';
 import {
   buildErrorEnvelope,
@@ -28,11 +31,13 @@ export async function getRequestSession(
   const repository = getRepository();
   const cookieHeader = req.headers.get('cookie') ?? undefined;
   const authorizationHeader = req.headers.get('authorization') ?? undefined;
+  const shadowHeader = req.headers.get('x-chronicle-shadow-tier') ?? undefined;
 
   return resolveAuthenticatedSession({
     repository,
     cookieHeader,
     authorizationHeader,
+    shadowHeader,
     targetProjectId,
   });
 }
@@ -63,6 +68,16 @@ export function jsonSuccess<T>(
 }
 
 export function handleRouteError(err: unknown): Response {
+  if (err instanceof AuthenticationError) {
+    return new Response(
+      JSON.stringify(buildErrorEnvelope(err.code, err.message)),
+      {
+        status: err.statusCode,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   if (err instanceof AuthorizationError) {
     return new Response(
       JSON.stringify(buildErrorEnvelope(err.code, err.message)),
@@ -87,6 +102,21 @@ export function handleRouteError(err: unknown): Response {
   }
 
   if (err instanceof Error) {
+    if (
+      err.message.includes('Authentication required') ||
+      err.message.includes('Invalid or expired Supabase Bearer token') ||
+      err.message.includes('Authentication token expired') ||
+      err.message.includes('Authentication service unavailable')
+    ) {
+      return new Response(
+        JSON.stringify(buildErrorEnvelope('UNAUTHORIZED', err.message)),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     if (err.message.includes('PERSISTENCE_UNAVAILABLE')) {
       return new Response(
         JSON.stringify(

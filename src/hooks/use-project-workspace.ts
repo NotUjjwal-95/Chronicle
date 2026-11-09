@@ -73,6 +73,7 @@ export interface ProjectWorkspaceContextValue {
     userId: string,
     shadowPreviewTier?: ClearanceTier | null
   ) => Promise<void>;
+  logout: () => Promise<void>;
   ingestSource: (input: {
     sourceType: SourceType;
     externalRef: string;
@@ -213,6 +214,11 @@ export function ProjectWorkspaceProvider({
         setSession(sessionEnv.data.session);
         setAvailablePersonas(sessionEnv.data.availablePersonas || []);
         setPersistenceMode(sessionEnv.meta.persistenceMode || 'seed');
+      } else if (sessionRes.status === 401) {
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
+          window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+          return;
+        }
       }
 
       const [
@@ -313,7 +319,7 @@ export function ProjectWorkspaceProvider({
   }, []);
 
   const switchSessionPersona = useCallback(
-    async (userId: string, shadowPreviewTier?: ClearanceTier | null) => {
+    async (_userId: string, shadowPreviewTier?: ClearanceTier | null) => {
       setIsMutating(true);
       clearBanners();
       try {
@@ -321,14 +327,13 @@ export function ProjectWorkspaceProvider({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId,
             projectId: project?.id || 'proj-core-payments',
             shadowPreviewTier: shadowPreviewTier ?? null,
           }),
         });
         const env = await res.json();
         if (!env.ok) {
-          throw new Error(env.error?.message || 'Failed to switch session');
+          throw new Error(env.error?.message || 'Failed to toggle shadow preview');
         }
         setSession(env.data.session);
         setInspectedEvidence(null);
@@ -336,11 +341,11 @@ export function ProjectWorkspaceProvider({
         setStatusBanner(
           env.data.session.isShadowPreview
             ? `Shadow Role Preview active: viewing strictly read-only Tier ${env.data.session.effectiveClearanceTier} scope.`
-            : `Switched active session to ${env.data.session.displayName} (${env.data.session.role} · Tier ${env.data.session.effectiveClearanceTier}).`
+            : `Shadow Role Preview deactivated. Restored full Tier ${env.data.session.effectiveClearanceTier} view.`
         );
       } catch (err) {
         setErrorBanner(
-          err instanceof Error ? err.message : 'Session switch failed'
+          err instanceof Error ? err.message : 'Shadow preview update failed'
         );
       } finally {
         setIsMutating(false);
@@ -348,6 +353,16 @@ export function ProjectWorkspaceProvider({
     },
     [project?.id, refreshWorkspace, clearBanners]
   );
+
+  const logout = useCallback(async () => {
+    try {
+      await fetch('/api/v1/auth/logout', { method: 'POST' });
+    } finally {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+  }, []);
 
   const ingestSource = useCallback(
     async (input: {
@@ -828,6 +843,7 @@ export function ProjectWorkspaceProvider({
         closeEvidenceDrawer,
         refreshWorkspace,
         switchSessionPersona,
+        logout,
         ingestSource,
         importGithubPr,
         runReconstruction,

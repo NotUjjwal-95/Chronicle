@@ -1,10 +1,9 @@
 import { getRepository } from '../../../../../infrastructure/database';
 import {
-  DEMO_USERS,
   resolveAuthenticatedSession,
-  serializeSessionCookie,
+  serializeShadowPreviewCookie,
 } from '../../../../../security/session-auth';
-import { SessionSwitchRequestSchema } from '../../../../../schemas/api-v1-schemas';
+import { ShadowPreviewToggleRequestSchema } from '../../../../../schemas/api-v1-schemas';
 import {
   getRequestSession,
   handleRouteError,
@@ -17,7 +16,6 @@ export async function GET(req: Request): Promise<Response> {
     return jsonSuccess(
       {
         session,
-        availablePersonas: DEMO_USERS,
       },
       {
         projectId: session.projectId,
@@ -31,60 +29,62 @@ export async function GET(req: Request): Promise<Response> {
 
 export async function POST(req: Request): Promise<Response> {
   try {
+    // 1. Authenticate the caller: client can NEVER supply or switch identities
     const body = await req.json();
-    const parsed = SessionSwitchRequestSchema.parse(body);
-    const repository = getRepository();
+    const parsed = ShadowPreviewToggleRequestSchema.parse(body);
     const targetProjectId = parsed.projectId || 'proj-core-payments';
 
-    const cookiePayload = {
-      userId: parsed.userId,
-      projectId: targetProjectId,
-      shadowPreviewTier: parsed.shadowPreviewTier ?? null,
-    };
+    const currentSession = await getRequestSession(req, targetProjectId);
+    const repository = getRepository();
 
-    const cookieString = serializeSessionCookie(cookiePayload);
+    // 2. Prepare shadow preview cookie for the verified caller
+    const shadowCookie = serializeShadowPreviewCookie(
+      parsed.shadowPreviewTier ?? null
+    );
 
-    const session = await resolveAuthenticatedSession({
+    // 3. Re-resolve session with updated shadow tier
+    const updatedSession = await resolveAuthenticatedSession({
       repository,
-      cookieHeader: cookieString,
+      cookieHeader: req.headers.get('cookie') ?? undefined,
+      authorizationHeader: req.headers.get('authorization') ?? undefined,
+      shadowHeader: parsed.shadowPreviewTier
+        ? String(parsed.shadowPreviewTier)
+        : undefined,
       targetProjectId,
     });
 
     await repository.appendAuditLog({
-      id: `audit-session-${Date.now()}`,
-      organizationId: session.organizationId,
-      projectId: session.projectId,
-      actorUserId: session.userId,
-      actorDisplayName: session.displayName,
-      actorRole: session.role,
-      effectiveClearanceTier: session.effectiveClearanceTier,
-      action: session.isShadowPreview
-        ? 'SHADOW_PREVIEW_TOGGLED'
-        : 'SESSION_SWITCHED',
+      id: `audit-shadow-${Date.now()}`,
+      organizationId: updatedSession.organizationId,
+      projectId: updatedSession.projectId,
+      actorUserId: updatedSession.userId,
+      actorDisplayName: updatedSession.displayName,
+      actorRole: updatedSession.role,
+      effectiveClearanceTier: updatedSession.effectiveClearanceTier,
+      action: 'SHADOW_PREVIEW_TOGGLED',
       targetEntityType: 'SESSION',
-      targetEntityId: session.userId,
-      accessTier: session.effectiveClearanceTier,
+      targetEntityId: updatedSession.userId,
+      accessTier: updatedSession.effectiveClearanceTier,
       metadata: {
-        role: session.role,
-        actualClearanceTier: session.actualClearanceTier,
-        effectiveClearanceTier: session.effectiveClearanceTier,
-        isShadowPreview: session.isShadowPreview,
+        role: updatedSession.role,
+        actualClearanceTier: updatedSession.actualClearanceTier,
+        effectiveClearanceTier: updatedSession.effectiveClearanceTier,
+        isShadowPreview: updatedSession.isShadowPreview,
       },
       createdAt: new Date().toISOString(),
     });
 
     return jsonSuccess(
       {
-        session,
-        availablePersonas: DEMO_USERS,
+        session: updatedSession,
       },
       {
-        projectId: session.projectId,
-        effectiveTier: session.effectiveClearanceTier,
+        projectId: updatedSession.projectId,
+        effectiveTier: updatedSession.effectiveClearanceTier,
       },
       200,
       {
-        'Set-Cookie': cookieString,
+        'Set-Cookie': shadowCookie,
       }
     );
   } catch (err) {

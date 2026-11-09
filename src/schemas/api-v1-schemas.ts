@@ -14,10 +14,23 @@ export const ClearanceTierSchema = z.union([
   z.literal(ClearanceTier.TIER_3_CONFIDENTIAL),
 ]);
 
-export const SessionSwitchRequestSchema = z.object({
-  userId: z.string().min(1),
+export const ShadowPreviewToggleRequestSchema = z.object({
   projectId: z.string().min(1).optional(),
   shadowPreviewTier: ClearanceTierSchema.nullable().optional(),
+});
+
+// Deprecated alias for transition: strictly rejects or ignores client-supplied userId
+export const SessionSwitchRequestSchema = ShadowPreviewToggleRequestSchema;
+
+export const LoginRequestSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const RegisterRequestSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  displayName: z.string().min(2).max(100),
 });
 
 export const CreateProjectRequestSchema = z.object({
