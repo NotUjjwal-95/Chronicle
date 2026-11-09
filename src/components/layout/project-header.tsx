@@ -1,3 +1,5 @@
+'use client';
+
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';
 import { formatShortTimestamp } from '../../lib/utils';
 

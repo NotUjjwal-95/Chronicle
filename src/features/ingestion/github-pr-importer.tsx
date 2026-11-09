@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
 import { ClearanceTier } from '../../types';
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';

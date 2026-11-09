@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 import { AlertCircle, CheckCircle2, Eye, X } from 'lucide-react';
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';

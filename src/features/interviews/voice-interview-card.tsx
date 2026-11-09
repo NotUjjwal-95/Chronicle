@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
 import { Mic, MicOff, CheckCircle2 } from 'lucide-react';
 import { ExitInterview, InterviewStatus } from '../../types';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';
 import { EmptyState } from '../../components/shared/empty-state';
 import { VoiceInterviewCard } from './voice-interview-card';

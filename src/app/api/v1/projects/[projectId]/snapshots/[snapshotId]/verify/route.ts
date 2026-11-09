@@ -5,6 +5,7 @@ import {
   getRequestSession,
   handleRouteError,
   jsonSuccess,
+  resolveParams,
   RouteContext,
 } from '../../../../../../../../lib/route-helper';
 
@@ -13,7 +14,7 @@ export async function POST(
   ctx: RouteContext
 ): Promise<Response> {
   try {
-    const { projectId, snapshotId } = ctx.params;
+    const { projectId, snapshotId } = await resolveParams(ctx);
     const session = await getRequestSession(req, projectId);
     const body = await req.json().catch(() => ({}));
     const parsed = VerifySnapshotRequestSchema.parse(body);

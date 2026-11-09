@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Search, ShieldAlert } from 'lucide-react';
 import { SourceType } from '../../types';

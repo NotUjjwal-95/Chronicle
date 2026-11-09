@@ -3,7 +3,7 @@ import {
   ClaimVerificationStatus,
   ClearanceTier,
   ExtractionOrigin,
-} from '../../types';
+} from '../../types/enums';
 
 export interface ClaimCitation {
   id: string;

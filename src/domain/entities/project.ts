@@ -1,4 +1,4 @@
-import { ClearanceTier, ReconstructionMode } from '../../types';
+import { ClearanceTier, ReconstructionMode } from '../../types/enums';
 
 export interface Contributor {
   id: string;

@@ -5,6 +5,7 @@ import {
   getRequestSession,
   handleRouteError,
   jsonSuccess,
+  resolveParams,
   RouteContext,
 } from '../../../../../../../../lib/route-helper';
 
@@ -13,7 +14,7 @@ export async function POST(
   ctx: RouteContext
 ): Promise<Response> {
   try {
-    const { projectId, conflictId } = ctx.params;
+    const { projectId, conflictId } = await resolveParams(ctx);
     const session = await getRequestSession(req, projectId);
     const body = await req.json();
     const parsed = ResolveConflictRequestSchema.parse(body);

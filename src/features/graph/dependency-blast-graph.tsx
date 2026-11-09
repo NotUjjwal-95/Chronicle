@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import { DependencyGraphNode, GraphNodeType } from '../../types';
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';

@@ -1,3 +1,5 @@
+'use client';
+
 import { Quote } from 'lucide-react';
 import { ClaimCitation } from '../../types';
 

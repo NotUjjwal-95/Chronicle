@@ -5,6 +5,7 @@ import {
   getRequestSession,
   handleRouteError,
   jsonSuccess,
+  resolveParams,
   RouteContext,
 } from '../../../../../lib/route-helper';
 
@@ -13,7 +14,7 @@ export async function GET(
   ctx: RouteContext
 ): Promise<Response> {
   try {
-    const { projectId } = ctx.params;
+    const { projectId } = await resolveParams(ctx);
     const session = await getRequestSession(req, projectId);
     const service = new ProjectService(getRepository());
     const summary = await service.getProjectWorkspaceSummary(session, projectId);
@@ -32,7 +33,7 @@ export async function PATCH(
   ctx: RouteContext
 ): Promise<Response> {
   try {
-    const { projectId } = ctx.params;
+    const { projectId } = await resolveParams(ctx);
     const session = await getRequestSession(req, projectId);
     const body = await req.json();
     const parsed = UpdateProjectRequestSchema.parse(body);

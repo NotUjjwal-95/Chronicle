@@ -349,7 +349,7 @@
       "modulePaths": [
         "src/security/hsm-signer.ts"
       ],
-      "rawContent": "src/security/hsm-signer.ts depends on upstream service Internal HSM Key Vault and environment variable HSM_SLOT_PIN. Synthetic GitHub credential fixture CHRONICLE_TEST_SECRET_GITHUB_PAT_001 was planted to validate secret redaction."
+      "rawContent": "src/security/hsm-signer.ts depends on upstream service Internal HSM Key Vault and environment variable HSM_SLOT_PIN. Test token ghp_FAKEPLANTEDGITHUBPAT1234567890ABCDEF was revoked during audit."
     },
     {
       "id": "src-14",

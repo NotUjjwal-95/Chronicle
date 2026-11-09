@@ -4,6 +4,7 @@ import {
   getRequestSession,
   handleRouteError,
   jsonSuccess,
+  resolveParams,
   RouteContext,
 } from '../../../../../../../../lib/route-helper';
 
@@ -12,7 +13,7 @@ export async function GET(
   ctx: RouteContext
 ): Promise<Response> {
   try {
-    const { projectId, snapshotId } = ctx.params;
+    const { projectId, snapshotId } = await resolveParams(ctx);
     const session = await getRequestSession(req, projectId);
     const url = new URL(req.url);
     const formatParam = url.searchParams.get('format');

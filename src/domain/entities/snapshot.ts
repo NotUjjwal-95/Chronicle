@@ -1,4 +1,4 @@
-import { ClearanceTier, ReconstructionMode } from '../../types';
+import { ClearanceTier, ReconstructionMode } from '../../types/enums';
 import { Claim } from './claim';
 import { Conflict } from './conflict';
 import { ExitInterview } from './interview';

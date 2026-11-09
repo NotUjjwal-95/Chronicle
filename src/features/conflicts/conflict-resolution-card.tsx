@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
 import { CheckCircle2, GitMerge } from 'lucide-react';
 import {

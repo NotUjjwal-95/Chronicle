@@ -1,3 +1,5 @@
+'use client';
+
 import { X, CheckCircle2, FileText, ShieldAlert } from 'lucide-react';
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';
 import { ClaimStatusBadge } from '../../components/shared/claim-status-badge';

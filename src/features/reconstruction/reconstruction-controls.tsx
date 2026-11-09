@@ -1,3 +1,5 @@
+'use client';
+
 import { Cpu, Sparkles, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { useProjectWorkspace } from '../../hooks/use-project-workspace';
 
