@@ -31,7 +31,6 @@ export async function createClient() {
     },
   });
 }
-
 /**
  * Creates a server Supabase client directly from a Cookie header string.
  * Used in Route Handlers where Request.headers.get('cookie') is available.
@@ -62,4 +61,3 @@ export function createClientFromCookieHeader(
     },
   });
 }
-

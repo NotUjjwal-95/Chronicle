@@ -4,11 +4,13 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Shield, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
+import { resolveLoginRedirect } from '../../lib/redirect-validator';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get('next') || '/dashboard';
+  const rawNext = searchParams.get('next');
+  const nextUrl = resolveLoginRedirect(rawNext);
   const urlError = searchParams.get('error');
 
   const [email, setEmail] = useState('');
